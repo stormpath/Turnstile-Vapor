@@ -18,15 +18,25 @@ class TurnstileMiddleware: Middleware {
     
     func respond(to request: Request, chainingTo next: Responder) throws -> Response {
         // Initialize subject
-        let sessionIdentifier = request.cookies["TurnstileSession"] ?? turnstile.sessionManager.createSession(subject: Subject(turnstile: turnstile))
-        let subject = turnstile.sessionManager.getSubject(identifier: sessionIdentifier)
+        var subject: Subject!
+        var newSessionID: String?
         
-        assert(subject != nil, "we should have created a subject")
+        if let sessionIdentifier = request.cookies["TurnstileSession"] {
+            subject = turnstile.sessionManager.getSubject(identifier: sessionIdentifier)
+        }
+        
+        if subject == nil {
+            subject = Subject(turnstile: turnstile)
+            newSessionID = turnstile.sessionManager.createSession(subject: subject)
+        }
         
         request.storage["TurnstileSubject"] = subject
         
         let response = try next.respond(to: request)
-        response.cookies["TurnstileSession"] = sessionIdentifier
+        
+        if let newSessionID = newSessionID {
+            response.cookies["TurnstileSession"] = newSessionID
+        }
         
         return response
     }
