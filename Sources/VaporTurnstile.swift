@@ -13,7 +13,7 @@ public class VaporTurnstile: Provider {
     public let turnstile: Turnstile
     
     public init(realms: [Realm]) {
-        turnstile = Turnstile(sessionManager: VaporSessionManager(), realms: realms)
+        turnstile = Turnstile(sessionManager: MemorySessionManager(), realms: realms)
     }
     
     public func boot(with droplet: Droplet) {
