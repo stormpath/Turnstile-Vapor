@@ -7,6 +7,7 @@
 //
 
 import Turnstile
+import Foundation
 
 class VaporSessionManager: SessionManager {
     var sessions = [String: Subject]()
@@ -16,18 +17,19 @@ class VaporSessionManager: SessionManager {
         self.turnstile = turnstile
     }
     
-    subscript(identifier: String) -> Subject {
-        get {
-            if let subject = sessions[identifier] {
-                return subject
-            } else {
-                let subject = Subject(turnstile: turnstile)
-                sessions[identifier] = subject
-                return subject
-            }
-        }
-        set {
-            sessions[identifier] = newValue
-        }
+    
+    func getSubject(identifier: String) -> Subject? {
+        return sessions[identifier]
+    }
+    
+    func createSession(subject: Subject) -> String {
+        // Temp implementation; actually fix later
+        let identifier = String(arc4random_uniform(1000000))
+        sessions[identifier] = subject
+        return identifier
+    }
+    
+    func deleteSession(identifier: String) {
+        sessions.removeValue(forKey: identifier)
     }
 }

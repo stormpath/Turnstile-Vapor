@@ -17,6 +17,5 @@ public class VaporTurnstile: Provider {
     }
     
     public func boot(with droplet: Droplet) {
-        Turnstile.sharedTurnstile = turnstile // HACK - fix sometime
     }
 }
