@@ -26,7 +26,7 @@ class TurnstileMiddleware: Middleware {
         request.storage["TurnstileSubject"] = subject
         
         let response = try next.respond(to: request)
-        response.cookies.insert(Cookie(name: "TurnstileSession", value: sessionIdentifier))
+        response.cookies["TurnstileSession"] = sessionIdentifier
         
         return response
     }
