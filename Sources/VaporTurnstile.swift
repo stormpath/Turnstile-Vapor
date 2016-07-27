@@ -12,8 +12,8 @@ import Turnstile
 public class VaporTurnstile: Provider {
     public let turnstile: Turnstile
     
-    public init() {
-        turnstile = Turnstile(sessionManager: VaporSessionManager())
+    public init(realms: [Realm]) {
+        turnstile = Turnstile(sessionManager: VaporSessionManager(), realms: realms)
     }
     
     public func boot(with droplet: Droplet) {
