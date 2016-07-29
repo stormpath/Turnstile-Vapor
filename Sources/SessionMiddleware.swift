@@ -1,5 +1,5 @@
 //
-//  TurnstileMiddleware.swift
+//  SessionMiddleware.swift
 //  VaporTurnstile
 //
 //  Created by Edward Jiang on 7/27/16.
@@ -9,7 +9,7 @@
 import Turnstile
 import Vapor
 
-class TurnstileMiddleware: Middleware {
+class SessionMiddleware: Middleware {
     let turnstile: Turnstile
     
     init(turnstile: Turnstile) {

@@ -17,6 +17,6 @@ public class VaporTurnstile: Provider {
     }
     
     public func boot(with droplet: Droplet) {
-        droplet.add(TurnstileMiddleware(turnstile: turnstile))
+        droplet.add(SessionMiddleware(turnstile: turnstile))
     }
 }
