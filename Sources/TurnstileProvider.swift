@@ -9,7 +9,7 @@
 import Vapor
 import Turnstile
 
-public class VaporTurnstile: Provider {
+public class TurnstileProvider: Provider {
     public let turnstile: Turnstile
     
     public init(realms: [Realm]) {
@@ -17,6 +17,8 @@ public class VaporTurnstile: Provider {
     }
     
     public func boot(with droplet: Droplet) {
+        droplet.add(SubjectInitializationMiddleware(turnstile: turnstile))
         droplet.add(SessionMiddleware(turnstile: turnstile))
+        droplet.add(BasicAuthMiddleware(turnstile: turnstile))
     }
 }
