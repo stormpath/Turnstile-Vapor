@@ -30,7 +30,8 @@ class SessionMiddleware: Middleware {
         if let subject = request.storage["TurnstileSubject"] as? Subject,
             sessionID = subject.authDetails?.sessionID {
             if request.cookies["TurnstileSession"] != sessionID {
-                response.cookies["TurnstileSession"] = sessionID
+                // Workaround for Vapor issue https://github.com/qutheory/vapor/issues/495
+                response.headers["Set-Cookie"] = "TurnstileSession=\(sessionID); Path=/;"
             }
         }
         
