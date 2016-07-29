@@ -20,5 +20,6 @@ public class TurnstileProvider: Provider {
         droplet.add(SubjectInitializationMiddleware(turnstile: turnstile))
         droplet.add(SessionMiddleware(turnstile: turnstile))
         droplet.add(BasicAuthMiddleware(turnstile: turnstile))
+        droplet.add(BearerAuthMiddleware(turnstile: turnstile))
     }
 }

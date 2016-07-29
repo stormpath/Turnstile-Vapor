@@ -23,14 +23,8 @@ struct AuthorizationHeader {
         guard let range = headerValue.range(of: "Basic ") else { return nil }
         let token = headerValue.substring(from: range.upperBound)
         
-        let decodedToken: String
-        do {
-            decodedToken = String(try Base64.decode(token))
-        } catch {
-            return nil
-        }
-        
-        guard let separatorRange = decodedToken.range(of: ":") else {
+        guard let decodedToken = try? Base64.decode(token).string(),
+            separatorRange = decodedToken.range(of: ":") else {
             return nil
         }
         
