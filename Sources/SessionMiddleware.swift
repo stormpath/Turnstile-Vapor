@@ -27,12 +27,15 @@ class SessionMiddleware: Middleware {
         
         let response = try next.respond(to: request)
         
-        if let subject = request.storage["TurnstileSubject"] as? Subject,
-            sessionID = subject.authDetails?.sessionID {
-            if request.cookies["TurnstileSession"] != sessionID {
-                // Workaround for Vapor issue https://github.com/qutheory/vapor/issues/495
-                response.headers["Set-Cookie"] = "TurnstileSession=\(sessionID); Path=/;"
-            }
+        // If we have a new session, set a new cookie
+        if let sessionID = request.subject.authDetails?.sessionID
+            where request.cookies["TurnstileSession"] != request.subject.authDetails?.sessionID {
+            // Workaround for Vapor issue https://github.com/qutheory/vapor/issues/495
+            response.headers["Set-Cookie"] = "TurnstileSession=\(sessionID); path=/;"
+        }
+        else if request.cookies["TurnstileSession"] != nil && request.subject.authDetails?.sessionID == nil {
+            // If we have a cookie but no session, delete it. 
+            response.headers["Set-Cookie"] = "TurnstileSession=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT"
         }
         
         return response
