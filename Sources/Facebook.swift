@@ -10,48 +10,20 @@ import Turnstile
 import Vapor
 import Engine
 
-public class FacebookProvider: Provider {
-    let realm: FacebookRealm
+public class FacebookRealm: Realm {
     let clientID: String
     let clientSecret: String
-    let callbackPath: String
-    var droplet: Droplet!
-    
-    public init(clientID: String, clientSecret: String, callbackPath: String) {
-        self.clientID = clientID
-        self.clientSecret = clientSecret
-        self.callbackPath = callbackPath
-        self.realm = FacebookRealm(clientID: clientID, clientSecret: clientSecret)
-    }
-    
-    public func boot(with droplet: Droplet) {
-        self.droplet = droplet
-    }
-    
-    public var redirectURI: String {
-        return "http://\(droplet.config["servers", "host"].string ?? "localhost"):\(droplet.config["servers", "port"].string ?? "8080")\(callbackPath)"
-    }
-    
-    var authorizationURI: String {
-        return "https://www.facebook.com/dialog/oauth?client_id=\(clientID)&redirect_uri=\(redirectURI)"
-    }
-    
-    public func credentials(from request: Request) throws -> Credentials {
-        guard let code = request.query?["code"]?.string else { throw UnsupportedCredentialsError() }
-        
-        return AuthorizationCode(code: code, redirectURI: redirectURI)
-    }
-}
-
-class FacebookRealm: Realm {
-    let clientID: String
-    let clientSecret: String
+    public let callbackURI: String
     
     var appAccessToken: String {
         return clientID + "%7C" + clientSecret
     }
     
-    func authenticate(credentials: Credentials) throws -> Account {
+    public var authorizationURI: String {
+        return "https://www.facebook.com/dialog/oauth?client_id=\(clientID)&redirect_uri=\(callbackURI)"
+    }
+    
+    public func authenticate(credentials: Credentials) throws -> Account {
         switch credentials {
         case let credentials as TokenCredentials:
             return try authenticate(credentials: credentials)
@@ -60,6 +32,12 @@ class FacebookRealm: Realm {
         default:
             throw UnsupportedCredentialsError()
         }
+    }
+    
+    public func authenticate(request: Request) throws -> Credentials {
+        guard let code = request.query?["code"]?.string else { throw UnsupportedCredentialsError() }
+        
+        return try authenticate(credentials: AuthorizationCode(code: code, redirectURI: "http://localhost:8080/login/facebook/callback"))
     }
     
     func authenticate(credentials: TokenCredentials) throws -> FacebookAccount {
@@ -90,21 +68,22 @@ class FacebookRealm: Realm {
         return try authenticate(credentials: TokenCredentials(token: accessToken))
     }
     
-    func register(credentials: Credentials) throws -> Account {
+    public func register(credentials: Credentials) throws -> Account {
         throw UnsupportedCredentialsError()
     }
     
-    init(clientID: String, clientSecret: String) {
+    public init(clientID: String, clientSecret: String, callbackURI: String) {
         self.clientID = clientID
         self.clientSecret = clientSecret
+        self.callbackURI = callbackURI
     }
 }
 
-struct AuthorizationCode: Credentials {
+public struct AuthorizationCode: Credentials {
     let code: String
     let redirectURI: String
 }
 
-struct FacebookAccount: Account, Credentials {
-    let accountID: String
+public struct FacebookAccount: Account, Credentials {
+    public let accountID: String
 }
