@@ -12,8 +12,8 @@ import Turnstile
 public class TurnstileProvider: Provider {
     public let turnstile: Turnstile
     
-    public init(realms: [Realm]) {
-        turnstile = Turnstile(sessionManager: MemorySessionManager(), realms: realms)
+    public init(realm: Realm) {
+        turnstile = Turnstile(sessionManager: MemorySessionManager(), realm: realm)
     }
     
     public func boot(with droplet: Droplet) {

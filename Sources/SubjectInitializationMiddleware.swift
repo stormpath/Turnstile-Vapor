@@ -18,7 +18,7 @@ class SubjectInitializationMiddleware: Middleware {
     
     func respond(to request: Request, chainingTo next: Responder) throws -> Response {
         // Initialize subject
-        request.storage["TurnstileSubject"] = Subject(turnstile: turnstile)
+        request.storage["TurnstileSubject"] = turnstile.createSubject()
         
         return try next.respond(to: request)
     }
