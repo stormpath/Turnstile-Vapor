@@ -8,6 +8,7 @@
 
 import Turnstile
 import Vapor
+import HTTP
 
 class BasicAuthMiddleware: Middleware {
     let turnstile: Turnstile
@@ -18,7 +19,7 @@ class BasicAuthMiddleware: Middleware {
     
     func respond(to request: Request, chainingTo next: Responder) throws -> Response {
         if let credentials = request.auth?.basic {
-            _ = try? request.subject.login(credentials: credentials)
+            _ = try? request.user.login(credentials: credentials)
         }
         
         return try next.respond(to: request)

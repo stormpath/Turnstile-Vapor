@@ -1,5 +1,5 @@
 //
-//  SubjectInitializationMiddleware.swift
+//  UserInitializationMiddleware.swift
 //  VaporTurnstile
 //
 //  Created by Edward Jiang on 7/28/16.
@@ -8,8 +8,9 @@
 
 import Turnstile
 import Vapor
+import HTTP
 
-class SubjectInitializationMiddleware: Middleware {
+class UserInitializationMiddleware: Middleware {
     let turnstile: Turnstile
     
     init(turnstile: Turnstile) {
@@ -17,8 +18,8 @@ class SubjectInitializationMiddleware: Middleware {
     }
     
     func respond(to request: Request, chainingTo next: Responder) throws -> Response {
-        // Initialize subject
-        request.storage["TurnstileSubject"] = turnstile.createSubject()
+        // Initialize user
+        request.storage["TurnstileUser"] = User(turnstile: turnstile)
         
         return try next.respond(to: request)
     }

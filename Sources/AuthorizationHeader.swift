@@ -9,7 +9,7 @@
 import CryptoEssentials
 import Foundation
 import Turnstile
-import Vapor
+import HTTP
 
 struct AuthorizationHeader {
     let headerValue: String
@@ -19,25 +19,25 @@ struct AuthorizationHeader {
         headerValue = value
     }
     
-    var basic: APIKeyCredentials? {
+    var basic: APIKey? {
         guard let range = headerValue.range(of: "Basic ") else { return nil }
         let token = headerValue.substring(from: range.upperBound)
         
-        guard let decodedToken = try? Base64.decode(token).string(),
-            separatorRange = decodedToken.range(of: ":") else {
+        guard let decodedToken = try? Base64.decode(token).string,
+            let separatorRange = decodedToken.range(of: ":") else {
             return nil
         }
         
         let apiKeyID = decodedToken.substring(to: separatorRange.lowerBound)
         let apiKeySecret = decodedToken.substring(from: separatorRange.upperBound)
         
-        return APIKeyCredentials(id: apiKeyID, secret: apiKeySecret)
+        return APIKey(id: apiKeyID, secret: apiKeySecret)
     }
     
-    var bearer: TokenCredentials? {
+    var bearer: Token? {
         guard let range = headerValue.range(of: "Bearer ") else { return nil }
         let token = headerValue.substring(from: range.upperBound)
-        return TokenCredentials(token: token)
+        return Token(token: token)
     }
 }
 

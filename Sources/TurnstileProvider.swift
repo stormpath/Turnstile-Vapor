@@ -11,15 +11,23 @@ import Turnstile
 
 public class TurnstileProvider: Provider {
     public let turnstile: Turnstile
+    public let provided = Providable()
     
     public init(realm: Realm) {
         turnstile = Turnstile(sessionManager: MemorySessionManager(), realm: realm)
     }
     
-    public func boot(with droplet: Droplet) {
-        droplet.add(SubjectInitializationMiddleware(turnstile: turnstile))
-        droplet.add(SessionMiddleware(turnstile: turnstile))
-        droplet.add(BasicAuthMiddleware(turnstile: turnstile))
-        droplet.add(BearerAuthMiddleware(turnstile: turnstile))
+    required public init(config: Config) throws {
+        preconditionFailure()
+    }
+    
+    public func afterInit(_ droplet: Droplet) {
+        droplet.middleware.append(UserInitializationMiddleware(turnstile: turnstile))
+        droplet.middleware.append(SessionMiddleware(turnstile: turnstile))
+        droplet.middleware.append(BasicAuthMiddleware(turnstile: turnstile))
+        droplet.middleware.append(BearerAuthMiddleware(turnstile: turnstile))
+    }
+    
+    public func beforeServe(_: Droplet) {
     }
 }

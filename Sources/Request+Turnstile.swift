@@ -7,10 +7,10 @@
 //
 
 import Turnstile
-import Vapor
+import HTTP
 
 public extension Request {
-    public var subject: Subject {
-        return storage["TurnstileSubject"] as! Subject
+    public var user: User {
+        return storage["TurnstileUser"] as! User
     }
 }

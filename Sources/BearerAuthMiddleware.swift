@@ -8,6 +8,7 @@
 
 import Turnstile
 import Vapor
+import HTTP
 
 class BearerAuthMiddleware: Middleware {
     let turnstile: Turnstile
@@ -18,7 +19,7 @@ class BearerAuthMiddleware: Middleware {
     
     func respond(to request: Request, chainingTo next: Responder) throws -> Response {
         if let credentials = request.auth?.bearer {
-            _ = try? request.subject.login(credentials: credentials)
+            _ = try? request.user.login(credentials: credentials)
         }
         
         return try next.respond(to: request)
