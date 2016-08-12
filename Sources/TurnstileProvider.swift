@@ -22,10 +22,11 @@ public class TurnstileProvider: Provider {
     }
     
     public func afterInit(_ droplet: Droplet) {
-        droplet.middleware.append(UserInitializationMiddleware(turnstile: turnstile))
-        droplet.middleware.append(SessionMiddleware(turnstile: turnstile))
-        droplet.middleware.append(BasicAuthMiddleware(turnstile: turnstile))
+        // Backwards for some reason?
         droplet.middleware.append(BearerAuthMiddleware(turnstile: turnstile))
+        droplet.middleware.append(BasicAuthMiddleware(turnstile: turnstile))
+        droplet.middleware.append(SessionMiddleware(turnstile: turnstile))
+        droplet.middleware.append(UserInitializationMiddleware(turnstile: turnstile))
     }
     
     public func beforeServe(_: Droplet) {
