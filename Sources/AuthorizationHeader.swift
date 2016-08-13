@@ -34,10 +34,10 @@ struct AuthorizationHeader {
         return APIKey(id: apiKeyID, secret: apiKeySecret)
     }
     
-    var bearer: Token? {
+    var bearer: AccessToken? {
         guard let range = headerValue.range(of: "Bearer ") else { return nil }
         let token = headerValue.substring(from: range.upperBound)
-        return Token(token: token)
+        return AccessToken(string: token)
     }
 }
 
