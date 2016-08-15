@@ -21,9 +21,9 @@ class SessionMiddleware: Middleware {
         // Initialize user
         
         if let sessionIdentifier = request.cookies["TurnstileSession"],
-            let user = try? turnstile.sessionManager.getUser(identifier: sessionIdentifier) {
+            let subject = try? turnstile.sessionManager.getSubject(identifier: sessionIdentifier) {
             
-            request.storage["TurnstileUser"] = user
+            request.user = subject
         }
         
         let response = try next.respond(to: request)

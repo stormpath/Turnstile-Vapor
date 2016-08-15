@@ -10,7 +10,12 @@ import Turnstile
 import HTTP
 
 public extension Request {
-    public var user: User {
-        return storage["TurnstileUser"] as! User
+    internal(set) public var user: Subject {
+        get {
+            return storage["TurnstileSubject"] as! Subject
+        }
+        set {
+            storage["TurnstileSubject"] = newValue
+        }
     }
 }

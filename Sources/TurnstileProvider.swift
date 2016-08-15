@@ -26,7 +26,7 @@ public class TurnstileProvider: Provider {
         droplet.middleware.append(BearerAuthMiddleware(turnstile: turnstile))
         droplet.middleware.append(BasicAuthMiddleware(turnstile: turnstile))
         droplet.middleware.append(SessionMiddleware(turnstile: turnstile))
-        droplet.middleware.append(UserInitializationMiddleware(turnstile: turnstile))
+        droplet.middleware.append(SubjectInitializationMiddleware(turnstile: turnstile))
     }
     
     public func beforeServe(_: Droplet) {

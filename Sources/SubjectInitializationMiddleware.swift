@@ -10,7 +10,7 @@ import Turnstile
 import Vapor
 import HTTP
 
-class UserInitializationMiddleware: Middleware {
+class SubjectInitializationMiddleware: Middleware {
     let turnstile: Turnstile
     
     init(turnstile: Turnstile) {
@@ -19,7 +19,7 @@ class UserInitializationMiddleware: Middleware {
     
     func respond(to request: Request, chainingTo next: Responder) throws -> Response {
         // Initialize user
-        request.storage["TurnstileUser"] = User(turnstile: turnstile)
+        request.user = Subject(turnstile: turnstile)
         
         return try next.respond(to: request)
     }
